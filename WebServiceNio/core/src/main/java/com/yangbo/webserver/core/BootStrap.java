@@ -11,6 +11,9 @@ public class BootStrap {
         String port = "8888";
 
         //程序是一个NIO类型的网络请求
+    }
+
+    public static void main(String[] args) {
 
     }
 }
