@@ -1,5 +1,7 @@
 package com.yangbo.webserver.core.context;
 
+import java.lang.reflect.InvocationTargetException;
+
 /**
  * @Author: yangbo
  * @Date: 2022-03-23-18:35
@@ -16,6 +18,10 @@ public class WebApplication {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
     }
