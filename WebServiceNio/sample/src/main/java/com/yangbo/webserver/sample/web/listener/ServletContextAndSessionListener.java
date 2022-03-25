@@ -4,6 +4,7 @@ import com.yangbo.webserver.core.listener.HttpSessionListener;
 import com.yangbo.webserver.core.listener.ServletContextListener;
 import com.yangbo.webserver.core.listener.ServletRequestListener;
 import com.yangbo.webserver.core.listener.event.HttpSessionEvent;
+import com.yangbo.webserver.core.listener.event.ServletContextEvent;
 import com.yangbo.webserver.core.listener.event.ServletRequestEvent;
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,12 +34,12 @@ public class ServletContextAndSessionListener implements ServletContextListener,
 
 
     @Override
-    public void contextInitialized(ServletContextListener sce) {
+    public void contextInitialized(ServletContextEvent sce) {
         log.info("servlet context init ...");
     }
 
     @Override
-    public void contextDestroyed(ServletContextListener sce) {
+    public void contextDestroyed(ServletContextEvent sce) {
         log.info("servlet context destroyed");
     }
 }

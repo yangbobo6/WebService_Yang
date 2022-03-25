@@ -13,15 +13,7 @@ public class WebApplication {
     static {
         try {
             servletContext = new ServletContext();
-        }catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
+        }catch(Exception e){
             e.printStackTrace();
         }
     }

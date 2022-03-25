@@ -1,7 +1,6 @@
 package com.yangbo.webserver.core.context;
 
 
-import com.sun.org.apache.xml.internal.security.utils.XMLUtils;
 import com.yangbo.webserver.core.context.holder.FilterHolder;
 import com.yangbo.webserver.core.context.holder.ServletHolder;
 import com.yangbo.webserver.core.cookie.Cookie;
@@ -12,16 +11,27 @@ import com.yangbo.webserver.core.listener.HttpSessionListener;
 import com.yangbo.webserver.core.listener.ServletContextListener;
 import com.yangbo.webserver.core.listener.ServletRequestListener;
 import com.yangbo.webserver.core.listener.event.HttpSessionEvent;
+import com.yangbo.webserver.core.listener.event.ServletContextEvent;
+import com.yangbo.webserver.core.listener.event.ServletRequestEvent;
+import com.yangbo.webserver.core.request.Request;
 import com.yangbo.webserver.core.response.Response;
 import com.yangbo.webserver.core.servlet.Servlet;
 import com.yangbo.webserver.core.session.HttpSession;
 import com.yangbo.webserver.core.session.IdleSessionCleaner;
 import com.yangbo.webserver.core.utils.UUIDUtil;
 import com.yangbo.webserver.core.utils.XMLUtil;
+
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.springframework.util.AntPathMatcher;
 
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.time.Duration;
 import java.time.Instant;
@@ -37,7 +47,8 @@ import static com.yangbo.webserver.core.constant.ContextConstant.DEFAULT_SESSION
  * @Date: 2022-03-20-22:46
  * @Description: 对web.xml的解析
  */
-
+@Slf4j
+@Data
 public class ServletContext {
     /**
      * 别名->类名     一对一关系
@@ -84,11 +95,11 @@ public class ServletContext {
     private IdleSessionCleaner idleSessionCleaner;
 
 
-    public ServletContext() throws IllegalAccessException, ClassNotFoundException, InstantiationException, InvocationTargetException, NoSuchMethodException {
+    public ServletContext() throws Exception {
         init();
     }
 
-    public void init() throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public void init() throws Exception {
         this.servlets = new HashMap<>();
         this.servletMapping = new HashMap<>();
         this.attributes = new ConcurrentHashMap<>();
@@ -96,9 +107,16 @@ public class ServletContext {
         this.filters = new HashMap<>();
         this.filterMapping = new HashMap<>();
         this.matcher = new AntPathMatcher();
-        this.idleSessionCleaner = new IdleSessionCleaner();
-        this.idleSessionCleaner.start();   //session这块还不熟悉  等
+        //this.idleSessionCleaner = new IdleSessionCleaner();
+        //this.idleSessionCleaner.start();   //session这块还不熟悉  等
+        this.servletContextListeners = new ArrayList<>();
+        this.servletRequestListeners = new ArrayList<>();
+        this.httpSessionListeners = new ArrayList<>();
         parseConfig();
+        ServletContextEvent servletContextEvent = new ServletContextEvent(this);
+        for (ServletContextListener listener : servletContextListeners) {
+            listener.contextInitialized(servletContextEvent);
+        }
     }
 
 
@@ -109,8 +127,13 @@ public class ServletContext {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    private void parseConfig() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        Document doc = XMLUtil.getDocument(ServletContext.class.getResourceAsStream("/web.xml"));
+    private void parseConfig() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, FileNotFoundException {
+
+        File file = new File("E:\\Project\\javaProject\\WebServer\\WebService_Yang\\WebServiceNio\\sample\\src\\main\\webapp\\WEB-INF\\web.xml");
+        InputStream inputStream = new FileInputStream(file);
+
+        //Document doc = XMLUtil.getDocument(ServletContext.class.getResourceAsStream("/web.xml"));
+        Document doc = XMLUtil.getDocument(inputStream);
         Element root = doc.getRootElement();
 
 
@@ -120,6 +143,7 @@ public class ServletContext {
         ) {
             String key = servletEle.element("servlet-name").getText();
             String value = servletEle.element("servlet-class").getText();
+            //System.out.println(key + value + "----");
             this.servlets.put(key, new ServletHolder(value));
         }
 
@@ -177,6 +201,7 @@ public class ServletContext {
                 httpSessionListeners.add((HttpSessionListener) eventListener);
             }
             if (eventListener instanceof ServletRequestListener) {
+                System.out.println(servletRequestListeners.size());
                 servletRequestListeners.add((ServletRequestListener) eventListener);
             }
         }
@@ -307,13 +332,22 @@ public class ServletContext {
     public HttpSession createSession(Response response) {
         HttpSession session = new HttpSession(UUIDUtil.uuid());
         sessions.put(session.getId(), session);
-        response.addCookie(new Cookie("JSESSIONID",session.getId()));
+        response.addCookie(new Cookie("JSESSIONID", session.getId()));
         HttpSessionEvent httpSessionEvent = new HttpSessionEvent(session);
-        for (HttpSessionListener listener:httpSessionListeners
-             ) {
+        for (HttpSessionListener listener : httpSessionListeners
+        ) {
             listener.sessionCreated(httpSessionEvent);
         }
         return session;
+    }
+
+    /**
+     * 获取session
+     * @param JSESSIONID
+     * @return
+     */
+    public HttpSession getSession(String JSESSIONID) {
+        return sessions.get(JSESSIONID);
     }
 
 
@@ -347,6 +381,20 @@ public class ServletContext {
     public void invalidateSession(HttpSession session) {
         sessions.remove(session.getId());
         afterSessionDestroyed(session);
+    }
+
+    //再解析完毕 Request以后，监听
+    public void afterRequestCreated(Request request) {
+        ServletRequestEvent servletRequestEvent = new ServletRequestEvent(this, request);
+        for (ServletRequestListener listener : servletRequestListeners) {
+            listener.requestInitialized(servletRequestEvent);
+        }
+    }
+    public void afterRequestDestroyed(Request request) {
+        ServletRequestEvent servletRequestEvent = new ServletRequestEvent(this, request);
+        for (ServletRequestListener listener : servletRequestListeners) {
+            listener.requestDestroyed(servletRequestEvent);
+        }
     }
 
 

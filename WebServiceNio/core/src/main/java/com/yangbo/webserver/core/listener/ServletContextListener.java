@@ -1,5 +1,7 @@
 package com.yangbo.webserver.core.listener;
 
+import com.yangbo.webserver.core.listener.event.ServletContextEvent;
+
 import java.util.EventListener;
 
 /**
@@ -12,11 +14,11 @@ public interface ServletContextListener extends EventListener {
      * 应用启动
      * @param sce
      */
-    void contextInitialized(ServletContextListener sce);
+    void contextInitialized(ServletContextEvent sce);
 
     /**
      * 应用关闭
      * @param sce
      */
-    void contextDestroyed(ServletContextListener sce);
+    void contextDestroyed(ServletContextEvent sce);
 }
