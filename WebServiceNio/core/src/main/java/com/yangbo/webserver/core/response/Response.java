@@ -79,14 +79,30 @@ public class Response {
     //一次性传入响应体
     private void buildBody(){
         this.headerAppender.append(body.length).append(CRLF).append(CRLF);
+        this.headerAppender.append("yangbo").append(CRLF);
     }
 
     /**
      * response构建的最后一步，将header和body转为字节数组
      */
     private void buildResponse(){
+        System.out.println("进入build");
         buildHeader();
+        System.out.println("进入body");
         buildBody();
+    }
+
+    /**
+     * 返回Response构建后的数据，用于BIO
+     * @return
+     */
+    public byte[] getResponseBytes() {
+        buildResponse();
+        byte[] header = this.headerAppender.toString().getBytes(Charset.forName("UTF-8"));
+        byte[] response = new byte[header.length + body.length];
+        System.arraycopy(header, 0, response, 0, header.length);
+        System.arraycopy(body, 0, response, header.length, body.length);
+        return response;
     }
 
     /**
@@ -99,6 +115,8 @@ public class Response {
         ByteBuffer[] response = {ByteBuffer.wrap(head),ByteBuffer.wrap(body)};
         return response;
     }
+
+
 
     /**
      * 重定向，注意重定向后会立即写数据至socket中

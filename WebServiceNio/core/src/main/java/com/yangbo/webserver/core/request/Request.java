@@ -27,7 +27,8 @@ import java.util.Map;
  *
  * 当 通过浏览器在url地址上发送  get/post/delete/put 请求时，服务器接收浏览器端的request请求，
  * 通过解析request 分析发送的  url等
- *  http://localhost:8080/login?username=yangbo&sex=m
+ *  发送 此请求 http://localhost:8080/login?username=yangbo&sex=m
+ *
  */
 @Getter
 @Setter
@@ -50,7 +51,8 @@ public class Request {
 
     /**
      * 获取queryString或者body（表单格式）的键值类型的数据
-     *
+     * name：yangbo  sex：m  age:18
+     * private Map<String, List<String>> params;
      * @param key
      * @return
      */
@@ -62,6 +64,14 @@ public class Request {
         return params.get(0);
     }
 
+    /**
+     * Request 的构造方法
+     * 解析HTTP请求
+     * 读取请求体只能使用字节流，使用字符流读不到
+     * @param data
+     * @throws RequestInvalidException
+     * @throws RequestParseException
+     */
     public Request(byte[] data) throws RequestInvalidException, RequestParseException {
         this.attributes = new HashMap<>();
         String[] lines = null;
@@ -78,6 +88,7 @@ public class Request {
         }
 
         try {
+            //解析请求头
             parseHeaders(lines);
             if (headers.containsKey("Content-Length") && !headers.get("Content-Length").get(0).equals("0")) {
                 parseBody(lines[lines.length - 1]);
@@ -140,25 +151,19 @@ public class Request {
     }
 
 
-
-
-
-
-
-
-    //对发送的 request 进行请求
+    //解析请求头
     private void parseHeaders(String[] lines){
-        log.info("解析请求头");
+        log.info("开始解析请求头");
         String firstLine = lines[0];
         //解析方法
         String[] firstLineSlices = firstLine.split(CharConstant.BLANK);
-        this.method = RequestMethod.valueOf(firstLineSlices[0]);
+        this.method = RequestMethod.valueOf(firstLineSlices[0]);  //GET
         log.debug("method:{}", this.method);
 
         //解析URL
         String rawURL = firstLineSlices[1];
-        String[] urlSlices = rawURL.split("\\?");
-        this.url = urlSlices[0];
+        String[] urlSlices = rawURL.split("\\?");  //?分开
+        this.url = urlSlices[0];        ///login.html   ?   uname=aaa&pwd=123456
         log.debug("url:{}", this.url);
 
         //解析URL参数
@@ -170,6 +175,7 @@ public class Request {
         //解析请求头
         String header;
         this.headers =new HashMap<>();
+        //将 请求头 里面的键值对全部放入map中
         for (int i = 1; i < lines.length; i++) {
             header = lines[i];
             if (header.equals("")) {
@@ -182,11 +188,13 @@ public class Request {
         }
         log.debug("headers:{}", this.headers);
 
-        //解析Cookie
 
-        if (headers.containsKey("Cookie")) {
+        //解析Cookie   headers  Cookie ： xxx=xxx ; xxx=xxx ; token=xxx
+        if (headers.containsKey("Cookie")) {    //get(0)是取第一个cookie
             String[] rawCookies = headers.get("Cookie").get(0).split("; ");
+            //放入到cookie里面  数组
             this.cookies = new Cookie[rawCookies.length];
+            //将 cookie 放入 cookies的数组中
             for (int i = 0; i < rawCookies.length; i++) {
                 String[] kv = rawCookies[i].split("=");
                 this.cookies[i] = new Cookie(kv[0], kv[1]);
@@ -196,7 +204,6 @@ public class Request {
             this.cookies = new Cookie[0];
         }
         log.info("Cookies:{}", Arrays.toString(cookies));
-
     }
 
     private void parseBody(String body) {
@@ -217,6 +224,8 @@ public class Request {
 
 
     private void parseParams(String params) {
+        //解析参数        uname=aaa  &  pwd=123456  &  sex=男
+        //private Map<String, List<String>> params;  放入
         String[] urlParams = params.split("&");
         if (this.params == null) {
             this.params = new HashMap<>();
