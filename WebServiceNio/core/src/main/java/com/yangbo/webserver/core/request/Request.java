@@ -8,6 +8,8 @@ import com.yangbo.webserver.core.enumeration.RequestMethod;
 import com.yangbo.webserver.core.exception.RequestInvalidException;
 import com.yangbo.webserver.core.exception.RequestParseException;
 import com.yangbo.webserver.core.network.handler.AbstractRequestHandler;
+import com.yangbo.webserver.core.request.dispatcher.ApplicationRequestDispatcher;
+import com.yangbo.webserver.core.request.dispatcher.RequestDispatcher;
 import com.yangbo.webserver.core.session.HttpSession;
 import lombok.Getter;
 import lombok.Setter;
@@ -45,9 +47,9 @@ public class Request {
     private Cookie[] cookies;
     private HttpSession session;
 
-//    public RequestDispatcher getRequestDispatcher(String url) {
-//        return new ApplicationRequestDispatcher(url);
-//    }
+    public RequestDispatcher getRequestDispatcher(String url) {
+        return new ApplicationRequestDispatcher(url);
+    }
 
     /**
      * 获取queryString或者body（表单格式）的键值类型的数据

@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/WebServiceNio/WebServiceNio.iml" filepath="$PROJECT_DIR$/WebServiceNio/WebServiceNio.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/WebService_Yang.iml" filepath="$PROJECT_DIR$/.idea/WebService_Yang.iml" />
+      <module fileurl="file://$PROJECT_DIR$/WebServiceNio/core/core.iml" filepath="$PROJECT_DIR$/WebServiceNio/core/core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/WebServiceNio/sample/sample.iml" filepath="$PROJECT_DIR$/WebServiceNio/sample/sample.iml" />
     </modules>
   </component>
 </project>

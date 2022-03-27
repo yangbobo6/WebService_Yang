@@ -119,6 +119,26 @@ public class ServletContext {
         }
     }
 
+    /**
+     * 应用关闭前被调用
+     */
+    public void destroy() {
+        servlets.values().forEach(servletHolder -> {
+            if (servletHolder.getServlet() != null) {
+                servletHolder.getServlet().destroy();
+            }
+        });
+        filters.values().forEach(filterHolder -> {
+            if (filterHolder.getFilter() != null) {
+                filterHolder.getFilter().destroy();
+            }
+        });
+        ServletContextEvent servletContextEvent = new ServletContextEvent(this);
+        for (ServletContextListener listener : servletContextListeners) {
+            listener.contextDestroyed(servletContextEvent);
+        }
+    }
+
 
     /**
      * web.xml文件解析，比如servlet，filter，listener等
@@ -395,6 +415,14 @@ public class ServletContext {
         for (ServletRequestListener listener : servletRequestListeners) {
             listener.requestDestroyed(servletRequestEvent);
         }
+    }
+
+    public Object getAttribute(String key) {
+        return attributes.get(key);
+    }
+
+    public void setAttribute(String key, Object value) {
+        attributes.put(key, value);
     }
 
 

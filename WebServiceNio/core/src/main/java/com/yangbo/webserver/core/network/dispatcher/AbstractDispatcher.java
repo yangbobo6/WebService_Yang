@@ -1,10 +1,51 @@
 package com.yangbo.webserver.core.network.dispatcher;
 
+import com.yangbo.webserver.core.context.ServletContext;
+import com.yangbo.webserver.core.context.WebApplication;
+import com.yangbo.webserver.core.network.wrapper.SocketWrapper;
+
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 /**
  * @Author: yangbo
  * @Date: 2022-03-19-22:16
- * @Description:
+ * @Description: 分发器的父类
  */
 public abstract class AbstractDispatcher {
+    protected ThreadPoolExecutor pool;
+    protected ServletContext servletContext;
+
+    public AbstractDispatcher() {
+        this.servletContext = WebApplication.getServletContext();
+
+        ThreadFactory threadFactory = new ThreadFactory() {
+            private int count;
+
+            @Override
+            public Thread newThread(Runnable r) {
+                return new Thread(r, "Boo Worker Poo - " + count++);
+            }
+        };
+        this.pool = new ThreadPoolExecutor(100,
+                100,
+                1,
+                TimeUnit.SECONDS,
+                new ArrayBlockingQueue<>(200),
+                threadFactory,
+                new ThreadPoolExecutor.CallerRunsPolicy()
+
+        );
+    }
+
+    //关闭线程池
+    public void poolShowdown(){
+        pool.shutdown();
+        servletContext.destroy();
+    }
+
+    public abstract void doDispatcher(SocketWrapper socketWrapper);
 
 }
