@@ -18,7 +18,7 @@ import static com.yangbo.webserver.core.constant.ContextConstant.ERROR_PAGE;
  */
 @Slf4j
 public class ExceptionHandler {
-    public void handler(ServletException e, Response response, SocketWrapper socketWrapper) {
+    public void handle(ServletException e, Response response, SocketWrapper socketWrapper) {
         try {
             if(e instanceof RequestInvalidException){
                 log.info("请求无效");

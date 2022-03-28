@@ -2,7 +2,9 @@ package com.yangbo.webserver.core.network.dispatcher;
 
 import com.yangbo.webserver.core.context.ServletContext;
 import com.yangbo.webserver.core.context.WebApplication;
+import com.yangbo.webserver.core.exception.handler.ExceptionHandler;
 import com.yangbo.webserver.core.network.wrapper.SocketWrapper;
+import com.yangbo.webserver.core.resource.ResourceHandler;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadFactory;
@@ -17,13 +19,16 @@ import java.util.concurrent.TimeUnit;
 public abstract class AbstractDispatcher {
     protected ThreadPoolExecutor pool;
     protected ServletContext servletContext;
+    protected ExceptionHandler exceptionHandler;
+    protected ResourceHandler resourceHandler;
 
     public AbstractDispatcher() {
         this.servletContext = WebApplication.getServletContext();
+        this.exceptionHandler = new ExceptionHandler();
+        this.resourceHandler = new ResourceHandler(exceptionHandler);
 
         ThreadFactory threadFactory = new ThreadFactory() {
             private int count;
-
             @Override
             public Thread newThread(Runnable r) {
                 return new Thread(r, "Boo Worker Poo - " + count++);
@@ -41,7 +46,7 @@ public abstract class AbstractDispatcher {
     }
 
     //关闭线程池
-    public void poolShowdown(){
+    public void shutdown(){
         pool.shutdown();
         servletContext.destroy();
     }

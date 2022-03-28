@@ -40,4 +40,16 @@ public class BioEndpoint {
     public Socket accept() throws IOException {
         return server.accept();
     }
+
+    public void close() {
+        isRunning = false;
+        dispatcher.shutdown();
+        try {
+            server.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }

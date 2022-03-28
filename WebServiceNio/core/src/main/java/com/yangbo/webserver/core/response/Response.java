@@ -2,6 +2,7 @@ package com.yangbo.webserver.core.response;
 
 import com.yangbo.webserver.core.cookie.Cookie;
 import com.yangbo.webserver.core.enumeration.HttpStatus;
+import com.yangbo.webserver.core.network.handler.AbstractRequestHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.ByteBuffer;
@@ -27,8 +28,9 @@ public class Response {
     private HttpStatus status = HttpStatus.OK;
     private String contentType = DEFAULT_CONTENT_TYPE;
     private byte[] body = new byte[0];
+    private AbstractRequestHandler requestHandler;
 
-    //private AbstractRequestHandler requestHandler;
+
     public Response() {
         this.headerAppender = new StringBuilder();
         this.cookies = new ArrayList<>();
@@ -135,7 +137,7 @@ public class Response {
      * 用于调用不同RequestHandler的写刷新（将response写入到客户端）
      * @param requestHandler
      */
-    /*public void setRequestHandler(AbstractRequestHandler requestHandler) {
+    public void setRequestHandler(AbstractRequestHandler requestHandler) {
         this.requestHandler = requestHandler;
-    }*/
+    }
 }

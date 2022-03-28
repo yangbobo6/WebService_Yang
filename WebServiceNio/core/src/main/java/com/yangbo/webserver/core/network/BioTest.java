@@ -59,8 +59,8 @@ public class BioTest {
 
                 //响应区
                 Response response = new Response();
-                BioRequestHandler bioRequestHandler = new BioRequestHandler(response,socket);
-                bioRequestHandler.flushResponse();
+                //BioRequestHandler bioRequestHandler = new BioRequestHandler(response,socket);
+                //bioRequestHandler.flushResponse();
             }
         } catch (Exception e) {
             e.printStackTrace();
