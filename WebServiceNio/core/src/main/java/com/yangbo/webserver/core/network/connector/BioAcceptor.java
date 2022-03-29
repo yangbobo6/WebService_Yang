@@ -17,6 +17,7 @@ public class BioAcceptor implements Runnable{
     private BioEndpoint server;
     private BioDispatcher dispatcher;
     public BioAcceptor(BioEndpoint server,BioDispatcher dispatcher){
+        log.info("创建acceptor");
         this.dispatcher = dispatcher;
         this.server = server;
     }

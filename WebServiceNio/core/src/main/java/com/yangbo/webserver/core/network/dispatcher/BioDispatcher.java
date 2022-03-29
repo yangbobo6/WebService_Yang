@@ -28,8 +28,10 @@ public class BioDispatcher extends AbstractDispatcher {
         Response response = null;
         try {
             BufferedInputStream bin = new BufferedInputStream(socket.getInputStream());
+            //byte[] bytes = bin.readAllBytes();
             byte[] bytes = new byte[bin.available()];
             int len = bin.read(bytes);
+            //int len = bytes.length;
             if(len<=0){
                 throw new RequestInvalidException();
             }

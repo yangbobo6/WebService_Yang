@@ -123,6 +123,7 @@ public class ServletContext {
      * 应用关闭前被调用
      */
     public void destroy() {
+        //map  servlet 类名
         servlets.values().forEach(servletHolder -> {
             if (servletHolder.getServlet() != null) {
                 servletHolder.getServlet().destroy();
@@ -149,7 +150,7 @@ public class ServletContext {
      */
     private void parseConfig() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, FileNotFoundException {
 
-        File file = new File("E:\\Project\\javaProject\\WebServer\\WebService_Yang\\WebServiceNio\\sample\\src\\main\\webapp\\WEB-INF\\web.xml");
+        File file = new File("E:\\Project\\javaProject\\WebServer\\WebService_Yang\\WebServiceNio\\core\\src\\main\\webapp\\WEB-INF\\web.xml");
         InputStream inputStream = new FileInputStream(file);
 
         //Document doc = XMLUtil.getDocument(ServletContext.class.getResourceAsStream("/web.xml"));
@@ -278,6 +279,7 @@ public class ServletContext {
         }
         if (servletHolder.getServlet() == null) {
             try {
+                log.info(servletHolder.getServletClass());
                 Servlet servlet = (Servlet) Class.forName(servletHolder.getServletClass()).getConstructor().newInstance();
                 //初始化
                 servlet.init();
@@ -329,6 +331,7 @@ public class ServletContext {
         }
         if (filterHolder.getFilter() == null) {
             try {
+                log.info(filterHolder.getFilterClass());
                 Filter filter = (Filter) Class.forName(filterHolder.getFilterClass()).getConstructor().newInstance();
                 filter.init();
                 filterHolder.setFilter(filter);

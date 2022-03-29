@@ -1,11 +1,9 @@
 package com.yangbo.webserver.core;
 
+import com.yangbo.webserver.core.network.endpoint.BioEndpoint;
+import com.yangbo.webserver.core.network.endpoint.Endpoint;
 
-import com.yangbo.webserver.core.context.ServletContext;
-import org.springframework.util.AntPathMatcher;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.EventListener;
+import java.util.Scanner;
 
 /**
  * @Author: yangbo
@@ -14,17 +12,18 @@ import java.util.EventListener;
  */
 public class BootStrap {
 
-
-//    public static void run(){
-//        String port = "8888";
-//
-//        //程序是一个NIO类型的网络请求
-//    }
-
     public static void main(String[] args) throws Exception {
-
-        ServletContext servletContext = new ServletContext();
-
-
+        BioEndpoint endpoint = new BioEndpoint();
+        endpoint.start();
+        //加入外部输入EXIT  退出
+        Scanner scanner = new Scanner(System.in);
+        String order;
+        while (scanner.hasNext()) {
+            order = scanner.next();
+            if (order.equals("EXIT")) {
+                endpoint.close();
+                System.exit(0);
+            }
+        }
     }
 }

@@ -5,6 +5,7 @@ import com.yangbo.webserver.core.context.WebApplication;
 import com.yangbo.webserver.core.exception.handler.ExceptionHandler;
 import com.yangbo.webserver.core.network.wrapper.SocketWrapper;
 import com.yangbo.webserver.core.resource.ResourceHandler;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadFactory;
@@ -16,6 +17,7 @@ import java.util.concurrent.TimeUnit;
  * @Date: 2022-03-19-22:16
  * @Description: 分发器的父类
  */
+@Slf4j
 public abstract class AbstractDispatcher {
     protected ThreadPoolExecutor pool;
     protected ServletContext servletContext;
@@ -43,6 +45,7 @@ public abstract class AbstractDispatcher {
                 new ThreadPoolExecutor.CallerRunsPolicy()
 
         );
+        log.info("bio - dispatcher 建立");
     }
 
     //关闭线程池

@@ -26,6 +26,7 @@ public class BioEndpoint {
             server = new ServerSocket(8888);
             initAcceptor();
             log.info("服务器启动");
+
         }catch (Exception e){
             e.printStackTrace();
             log.info("服务器启动失败");
@@ -35,6 +36,11 @@ public class BioEndpoint {
 
     public void initAcceptor(){
         acceptor = new BioAcceptor(this,dispatcher);
+
+        //线程开启
+        Thread t = new Thread(acceptor,"bio-acceptor");
+        t.setDaemon(true);
+        t.start();
     }
 
     public Socket accept() throws IOException {
