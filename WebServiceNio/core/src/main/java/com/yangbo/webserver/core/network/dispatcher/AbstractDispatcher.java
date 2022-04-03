@@ -45,7 +45,7 @@ public abstract class AbstractDispatcher {
                 new ThreadPoolExecutor.CallerRunsPolicy()
 
         );
-        log.info("bio - dispatcher 建立");
+        log.info("dispatcher 建立");
     }
 
     //关闭线程池

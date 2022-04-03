@@ -274,12 +274,15 @@ public class ServletContext {
     private Servlet initAndGetServlet(String servletAlias) throws ServletNotFoundException {
         // 通过别名  寻找 Class类
         ServletHolder servletHolder = servlets.get(servletAlias);
+
+        //如果servletHolder不存在
         if (servletHolder == null) {
             throw new ServletNotFoundException();
         }
+        //如果servlet 为空
         if (servletHolder.getServlet() == null) {
             try {
-                log.info(servletHolder.getServletClass());
+                log.info("根据 url创建  servlet ");
                 Servlet servlet = (Servlet) Class.forName(servletHolder.getServletClass()).getConstructor().newInstance();
                 //初始化
                 servlet.init();

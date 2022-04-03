@@ -38,11 +38,11 @@ import java.util.Map;
 public class Request {
 
     private AbstractRequestHandler requestHandler;
-    private RequestMethod method;
-    private String url;
-    private Map<String, List<String>> params;
-    private Map<String, List<String>> headers;
-    private Map<String, Object> attributes;
+    private RequestMethod method;    //请求方法
+    private String url;                //请求url
+    private Map<String, List<String>> params;  //请求参数  name = yangbo
+    private Map<String, List<String>> headers; //请求头信息
+    private Map<String, Object> attributes;   //可以向请求头中添加数据  ，  并获取
     private ServletContext servletContext;
     private Cookie[] cookies;
     private HttpSession session;
@@ -92,6 +92,8 @@ public class Request {
         try {
             //解析请求头
             parseHeaders(lines);
+
+            //判断是否有请求体
             if (headers.containsKey("Content-Length") && !headers.get("Content-Length").get(0).equals("0")) {
                 parseBody(lines[lines.length - 1]);
             }
@@ -153,9 +155,9 @@ public class Request {
     }
 
 
-    //解析请求头
+    //解析请求头  第一行是请求行  方法  url
     private void parseHeaders(String[] lines){
-        log.info("开始解析请求头");
+        log.info("开始解析请求行");
         String firstLine = lines[0];
         //解析方法
         String[] firstLineSlices = firstLine.split(CharConstant.BLANK);
@@ -175,6 +177,7 @@ public class Request {
         log.debug("params:{}", this.params);
 
         //解析请求头
+        log.info("解析请求头...");
         String header;
         this.headers =new HashMap<>();
         //将 请求头 里面的键值对全部放入map中

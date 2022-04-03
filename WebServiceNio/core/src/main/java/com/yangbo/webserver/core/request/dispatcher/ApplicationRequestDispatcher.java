@@ -36,6 +36,7 @@ public class ApplicationRequestDispatcher implements RequestDispatcher {
         }
         log.info("forward至{}页面", url);
         String body = TemplateResolver.resolve(new String(IOUtil.getByteFromFile(url), Charset.forName("UTF-8")), request);
+        log.info("------"+body);
         response.setContentType(MimeTypeUtil.getTypes(url));
         response.setBody(body.getBytes(Charset.forName("UTF-8")));
     }

@@ -52,13 +52,16 @@ public abstract class AbstractRequestHandler implements FilterChain,Runnable {
         this.isFinished = false;
         this.request = request;
         this.response = response;
-        request.setServletContext(servletContext);
+
+        request.setServletContext(servletContext);   //??? 用处？
         request.setRequestHandler(this);
         response.setRequestHandler(this);
+
         // 根据url查询匹配的servlet，结果是0个或1个
         servlet = servletContext.mapServlet(request.getUrl());
         // 根据url查询匹配的filter，结果是0个或多个
         filters = servletContext.mapFilter(request.getUrl());
+        log.info("------AbstractRequestHandler 创建完毕------");
     }
 
     /**
@@ -66,8 +69,10 @@ public abstract class AbstractRequestHandler implements FilterChain,Runnable {
      */
     @Override
     public void run() {
+        log.info("----线程开启-----");
         // 如果没有filter，则直接执行servlet
         if (filters.isEmpty()) {
+            log.info(filters.toString());
             service();
         } else {
             // 先执行filter
@@ -82,6 +87,8 @@ public abstract class AbstractRequestHandler implements FilterChain,Runnable {
      * 如果所有Filter都执行完毕，那么会调用service方法，执行servlet逻辑
      * @param request
      * @param response
+     *
+     * 这个是filterChains的 方法
      */
     @Override
     public void doFilter(Request request, Response response) {

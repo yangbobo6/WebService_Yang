@@ -114,6 +114,7 @@ public class Response {
     public ByteBuffer[] getResponseByteBuffer(){
         buildResponse();
         byte[] head = this.headerAppender.toString().getBytes(Charset.forName("UTF-8"));
+        //字节数组转化为 Bytebuffer数组
         ByteBuffer[] response = {ByteBuffer.wrap(head),ByteBuffer.wrap(body)};
         return response;
     }
