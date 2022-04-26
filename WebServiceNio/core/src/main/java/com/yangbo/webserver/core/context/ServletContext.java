@@ -143,7 +143,7 @@ public class ServletContext {
 
     /**
      * web.xml文件解析，比如servlet，filter，listener等
-     *
+     * 
      * @throws ClassNotFoundException
      * @throws IllegalAccessException
      * @throws InstantiationException
@@ -219,10 +219,12 @@ public class ServletContext {
                 servletContextListeners.add((ServletContextListener) eventListener);
             }
             if (eventListener instanceof HttpSessionListener) {
+                //加入到httpSessionListener队列中去
                 httpSessionListeners.add((HttpSessionListener) eventListener);
             }
             if (eventListener instanceof ServletRequestListener) {
                 System.out.println(servletRequestListeners.size());
+                //父类的add方法
                 servletRequestListeners.add((ServletRequestListener) eventListener);
             }
         }
@@ -359,9 +361,12 @@ public class ServletContext {
         HttpSession session = new HttpSession(UUIDUtil.uuid());
         sessions.put(session.getId(), session);
         response.addCookie(new Cookie("JSESSIONID", session.getId()));
+        //sessionEvent  事件生成
         HttpSessionEvent httpSessionEvent = new HttpSessionEvent(session);
+        //新创建一个session，触发session监听器，可能有多个
         for (HttpSessionListener listener : httpSessionListeners
         ) {
+            //触发监听器
             listener.sessionCreated(httpSessionEvent);
         }
         return session;

@@ -77,7 +77,6 @@
     <listener>
         <!--listener-class标签是我们什么的listener的全路径，该类需要实现系统已经实现的listener接口。-->
         <listener-class>com.yangbo.webserver.sample.web.listener.MyServletRequestListener</listener-class>
-
-        <!--<listener-class>com.yangbo.webserver.sample.web.listener.ServletContextAndSessionListener</listener-class>-->
+<!--        <listener-class>com.yangbo.webserver.sample.web.listener.ServletContextAndSessionListener</listener-class>-->
     </listener>
 </web-app>

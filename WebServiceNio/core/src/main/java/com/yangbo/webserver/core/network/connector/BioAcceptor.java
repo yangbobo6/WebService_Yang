@@ -27,8 +27,10 @@ public class BioAcceptor implements Runnable{
         log.info("开始监听");
         Socket client;
         try {
+            //接收网络请求，client是个socket
             client = server.accept();
             log.info("连接成功+1   "+client);
+            //连接成功，连接数加一
             dispatcher.doDispatcher(new BioSocketWrapper(client));
 
         }catch (Exception e){

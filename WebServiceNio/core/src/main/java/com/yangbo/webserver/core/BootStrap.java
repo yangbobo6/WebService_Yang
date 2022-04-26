@@ -17,7 +17,7 @@ public class BootStrap {
         endpoint.start();
         //加入外部输入EXIT  退出
         Scanner scanner = new Scanner(System.in);
-        String order;
+        String order;                                                                                                                               
         while (scanner.hasNext()) {
             order = scanner.next();
             if (order.equals("EXIT")) {

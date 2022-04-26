@@ -25,6 +25,7 @@ public abstract class AbstractDispatcher {
     protected ResourceHandler resourceHandler;
 
     public AbstractDispatcher() {
+        //对web.xml的解析 （完成 访问地址-->具体servlet的映射）
         this.servletContext = WebApplication.getServletContext();
         this.exceptionHandler = new ExceptionHandler();
         this.resourceHandler = new ResourceHandler(exceptionHandler);

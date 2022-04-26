@@ -6,14 +6,14 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="core" />
         <module name="sample" />
+        <module name="core" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="core" target="1.5" />
+      <module name="core" target="9" />
       <module name="sample" target="8" />
-      <module name="WebServiceNio" target="8" />
+      <module name="WebServiceNio" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

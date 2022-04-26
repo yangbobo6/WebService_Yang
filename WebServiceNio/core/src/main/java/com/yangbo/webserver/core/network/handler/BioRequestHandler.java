@@ -52,7 +52,7 @@ public class BioRequestHandler extends AbstractRequestHandler{
                 log.info("关闭socket");
             }
         }
-        //WebApplication.getServletContext().afterRequestDestroyed(request);
+        WebApplication.getServletContext().afterRequestDestroyed(request);
 
     }
 

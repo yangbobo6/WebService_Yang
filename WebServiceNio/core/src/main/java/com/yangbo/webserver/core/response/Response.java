@@ -131,7 +131,7 @@ public class Response {
         setStatus(HttpStatus.MOVED_TEMPORARILY);
         buildResponse();
         // 刷新至客户端
-        //requestHandler.flushResponse();
+        requestHandler.flushResponse();
     }
 
     /**
