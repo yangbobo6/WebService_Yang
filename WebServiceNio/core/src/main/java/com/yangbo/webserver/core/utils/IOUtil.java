@@ -14,8 +14,9 @@ import java.io.InputStream;
  */
 @Slf4j
 public class IOUtil {
+    
     public static byte[] getByteFromFile(String fileName) throws IOException {
-        //通过文件名  获取字节流
+        //通过login.html文件名  获取字节流,返回给template模板类
         InputStream in = IOUtil.class.getResourceAsStream(fileName);
         if (in == null) {
             log.info("Not Found File:{}", fileName);

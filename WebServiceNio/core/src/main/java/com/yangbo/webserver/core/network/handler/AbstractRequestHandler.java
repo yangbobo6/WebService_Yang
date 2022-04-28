@@ -57,11 +57,12 @@ public abstract class AbstractRequestHandler implements FilterChain,Runnable {
         request.setRequestHandler(this);
         response.setRequestHandler(this);
 
-        // 根据url查询匹配的servlet，结果是0个或1个
+        // 根据url查询匹配的servlet，结果是0个或1个,创建好servlet
         servlet = servletContext.mapServlet(request.getUrl());
+        
         // 根据url查询匹配的filter，结果是0个或多个
         filters = servletContext.mapFilter(request.getUrl());
-        log.info("------AbstractRequestHandler 创建完毕------");
+        log.info("------AbstractRequestHandler（ servlet filter） 创建完毕------");
     }
 
     /**
@@ -71,7 +72,7 @@ public abstract class AbstractRequestHandler implements FilterChain,Runnable {
     public void run() {
         log.info("----线程开启-----");
         // 如果没有filter，则直接执行servlet
-        if (filters.isEmpty()) {
+        if (filters.isEmpty()){
             log.info(filters.toString());
             service();
         } else {
@@ -93,6 +94,7 @@ public abstract class AbstractRequestHandler implements FilterChain,Runnable {
     @Override
     public void doFilter(Request request, Response response) {
         if (filterIndex < filters.size()) {
+            //过滤器执行（login和log过滤器）
             filters.get(filterIndex++).doFilter(request, response, this);
         } else {
             service();
@@ -100,6 +102,7 @@ public abstract class AbstractRequestHandler implements FilterChain,Runnable {
     }
 
     /**
+     * 根据不同的请求，调用不同的servlet
      * 调用servlet
      */
     private void service() {
@@ -121,12 +124,9 @@ public abstract class AbstractRequestHandler implements FilterChain,Runnable {
         }
         log.info("请求处理完毕");
     }
-
-
+    
     /**
      * 响应数据写回到客户端
      */
     public abstract void flushResponse();
-
-
 }

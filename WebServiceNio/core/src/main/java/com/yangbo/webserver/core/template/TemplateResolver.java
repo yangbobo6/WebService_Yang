@@ -21,16 +21,21 @@ import java.util.regex.Pattern;
  */
 @Slf4j
 public class TemplateResolver {
+    //匹配${}里面的值
     public static final Pattern regex = Pattern.compile("\\$\\{(.*?)}");
 
     public static String resolve(String content, Request request) throws TemplateResolveException {
         Matcher matcher = regex.matcher(content);
         StringBuffer sb = new StringBuffer();
+        log.info("content : "+content);
+        log.info(matcher.toString()+"\n"+matcher.find());
         while (matcher.find()) {
             log.info("{}", matcher.group(1));
             // placeHolder 格式为scope.x.y.z
             // scope值为requestScope,sessionScope,applicationScope
             String placeHolder = matcher.group(1);
+            log.info("placeHolder: "+placeHolder);
+            //获取下标
             if (placeHolder.indexOf('.') == -1) {
                 throw new TemplateResolveException();
             }

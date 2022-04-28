@@ -29,6 +29,7 @@ import java.nio.charset.Charset;
 public class ApplicationRequestDispatcher implements RequestDispatcher {
     private String url;
 
+    //请求分发器，转发作用
     @Override
     public void forward(Request request, Response response) throws ServletException, IOException {
         if (ResourceHandler.class.getResource(url) == null) {

@@ -123,7 +123,7 @@ public class ServletContext {
      * 应用关闭前被调用
      */
     public void destroy() {
-        //map  servlet 类名
+        //map  servlet 类名    servlet  filter servletContextEvent清除
         servlets.values().forEach(servletHolder -> {
             if (servletHolder.getServlet() != null) {
                 servletHolder.getServlet().destroy();
@@ -228,6 +228,11 @@ public class ServletContext {
                 servletRequestListeners.add((ServletRequestListener) eventListener);
             }
         }
+        
+        log.info("对web.xml解析结果为：");
+        
+        log.info(this.servlets+"\n"+this.servletMapping
+        +"\n"+this.filters+"\n"+filterMapping);
     }
 
 
@@ -242,11 +247,15 @@ public class ServletContext {
         //精确匹配 (解析之后的键值对存在map里面)  url --> 别名
         String servletAlias = servletMapping.get(url);
         if (servletAlias != null) {
+            log.info("精确匹配成功，url映射的class为："+servletAlias);
             return initAndGetServlet(servletAlias);
         }
-        //路径匹配
+        
+        
+        //路径匹配   如果servlet中不存在的，则用路径匹配
         List<String> matchPatterns = new ArrayList<>();
         Set<String> patterns = servletMapping.keySet();  //获取所有url路径
+        log.info("路径匹配: \n"+patterns.toString());
         for (String pattern : patterns
         ) {
             if (matcher.match(pattern, url)) {
@@ -303,7 +312,10 @@ public class ServletContext {
      * @return
      */
     public List<Filter> mapFilter(String url) throws FilterNotFoundException {
+        log.info("过滤器匹配的url :"+url);
         List<String> matchingPatterns = new ArrayList<>();
+        
+        //过滤器的url 只能 按照路径匹配
         Set<String> patterns = filterMapping.keySet();
         for (String pattern : patterns
         ) {
@@ -311,10 +323,11 @@ public class ServletContext {
                 matchingPatterns.add(pattern);
             }
         }
+        
         Set<String> filterAliases = matchingPatterns.stream().flatMap(pattern -> this.filterMapping.get(pattern).stream()).collect(Collectors.toSet());
+        log.info("过滤器filterAliases:"+filterAliases.toString());
         List<Filter> result = new ArrayList<>();
-        for (String alias : filterAliases
-        ) {
+        for (String alias : filterAliases) {
             //全部初始化
             result.add(initAndGetFilter(alias));
         }
@@ -324,19 +337,22 @@ public class ServletContext {
     /**
      * 反射的方式获取
      * 初始化并返回Filter实例，如果已经初始化过则直接返回
-     *
      * @param filterAlias
      * @return
      * @throws FilterNotFoundException
      */
     public Filter initAndGetFilter(String filterAlias) throws FilterNotFoundException {
+        
+        log.info("filter :"+filters.toString()+"\n"+"filterAlias:"+filterAlias);
+        
         FilterHolder filterHolder = filters.get(filterAlias);
         if (filterHolder == null) {
             throw new FilterNotFoundException();
         }
+        //如果过滤器内
         if (filterHolder.getFilter() == null) {
             try {
-                log.info(filterHolder.getFilterClass());
+                log.info("filterHolder对象："+filterHolder.toString());
                 Filter filter = (Filter) Class.forName(filterHolder.getFilterClass()).getConstructor().newInstance();
                 filter.init();
                 filterHolder.setFilter(filter);
@@ -383,7 +399,7 @@ public class ServletContext {
 
 
     /**
-     * 清除空闲的session
+     * 清除空闲的session    session时间过期，清除
      * 由于ConcurrentHashMap是线程安全的，所以remove不需要进行加锁
      */
     public void cleanIdleSessions() {
@@ -413,6 +429,10 @@ public class ServletContext {
         sessions.remove(session.getId());
         afterSessionDestroyed(session);
     }
+    
+    
+    
+    
 
     //再解析完毕 Request以后，监听
     public void afterRequestCreated(Request request) {
